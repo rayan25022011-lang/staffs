@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>VIZU Staff Panel</title>
+<title>Nono Staff Panel</title>
 <style>
 :root{--bg:#0b0b0e;--panel:rgba(255,255,255,.04);--line:rgba(255,255,255,.08);--tx:#e8e8ec;--mu:#8a8a96;--ac:#e5242f;--ac2:#ff4753;--ok:#2ecc71;--wa:#f0a030;color-scheme:dark}
 *{box-sizing:border-box;margin:0}
@@ -40,7 +40,7 @@ input,select,textarea{background:rgba(0,0,0,.35);border:1px solid var(--line);co
 #auth{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:radial-gradient(800px 500px at 50% -10%,rgba(229,36,47,.2),transparent),var(--bg)}#auth:empty{display:none}body.lock aside,body.lock header,body.lock main{display:none}
 @media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
 </style></head><body>
-<aside><div class="logo">VIZU<b>·</b>STAFF</div><nav id="nav"></nav></aside>
+<aside><div class="logo">Nono<b>·</b>STAFF</div><nav id="nav"></nav></aside>
 <header><input id="gs" placeholder="Rechercher un joueur, un ticket, un ID…"><div class="sp"></div>
 <div class="bell" onclick="toast('3 nouvelles notifications')">🔔<i>3</i></div>
 <div class="me" id="me"></div></header>
@@ -148,13 +148,13 @@ function logFiltered(){const q=lf.q.toLowerCase();return logs.filter(l=>(lf.cat=
 function logRows(){const e=$("#lg");if(!e)return;const f=logFiltered();
 e.innerHTML=`<table><tr><th>Date<th>Staff<th>Catégorie<th>Action<th>Cible</tr>${f.slice(0,200).map(l=>`<tr><td style="white-space:nowrap">${fmt(l.ts)}<td>${esc(l.u)}<td>${tg(esc(l.cat),catc[l.cat])}<td>${esc(l.a)}<td>${esc(l.c)}</tr>`).join("")||`<tr><td colspan="5" style="color:var(--mu)">Aucun log</tr>`}</table><p style="color:var(--mu);margin-top:10px;font-size:12px">${f.length} entrée(s)${f.length>200?" · 200 affichées":""}</p>`}
 function logExport(){const f=logFiltered(),q=x=>'"'+String(x).replace(/"/g,'""')+'"',csv=["Date;Staff;Catégorie;Action;Cible",...f.map(l=>[new Date(l.ts).toLocaleString("fr-FR"),l.u,l.cat,l.a,l.c].map(q).join(";"))].join("\n"),a=document.createElement("a");
-a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));a.download="logs-vizu.csv";a.click();toast("Export CSV lancé")}
+a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));a.download="logs-Nono.csv";a.click();toast("Export CSV lancé")}
 function logClear(){if(!isAdm())return;confirmBox("Vider les logs ?","Toutes les entrées seront supprimées.",()=>{logs=[];ST.set("logs",logs);addLog("Logs","Logs vidés");render()})}
-const CODE="VIZU-STAFF",esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const CODE="Nono-STAFF",esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let me=null,am="login";
-async function hs(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("vizu:"+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+async function hs(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("Nono:"+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function authUI(err,ok){const l=am=="login";
-$("#auth").innerHTML=`<div class="card" style="width:min(420px,100%)"><div class="logo" style="text-align:center">VIZU<b>·</b>STAFF</div><h3 style="text-align:center">${l?"Connexion":"Créer un compte staff"}</h3>
+$("#auth").innerHTML=`<div class="card" style="width:min(420px,100%)"><div class="logo" style="text-align:center">Nono<b>·</b>STAFF</div><h3 style="text-align:center">${l?"Connexion":"Créer un compte staff"}</h3>
 <div class="f"><label>Pseudo staff</label><input id="au" autocomplete="username"></div>${l?"":`<div class="f"><label>Discord</label><input id="ad" placeholder="pseudo#0000"></div>`}
 <div class="f"><label>Mot de passe</label><input id="ap" type="password" autocomplete="${l?"current-password":"new-password"}"></div>${l?"":`<div class="f"><label>Confirmer le mot de passe</label><input id="ap2" type="password"></div><div class="f"><label>Code d’invitation staff</label><input id="ac"></div>`}
 <p style="min-height:20px;color:${ok?"var(--ok)":"var(--ac2)"};margin-bottom:10px">${err||""}</p>
