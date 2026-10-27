@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VIZU Staff Panel</title>
+<style>
+:root{--bg:#0b0b0e;--panel:rgba(255,255,255,.04);--line:rgba(255,255,255,.08);--tx:#e8e8ec;--mu:#8a8a96;--ac:#e5242f;--ac2:#ff4753;--ok:#2ecc71;--wa:#f0a030;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(900px 500px at 80% -10%,rgba(229,36,47,.13),transparent),var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;padding-top:env(safe-area-inset-top,0px)}
+aside{position:fixed;inset:0 auto 0 0;width:230px;background:#09090c;border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+.logo{font-weight:800;letter-spacing:.12em;font-size:15px;padding:6px 10px 18px}.logo b{color:var(--ac)}
+nav a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;color:var(--mu);cursor:pointer;transition:.2s;border-left:2px solid transparent}
+nav a:hover{background:var(--panel);color:var(--tx)}nav a.on{background:linear-gradient(90deg,rgba(229,36,47,.18),transparent);color:#fff;border-left-color:var(--ac)}
+header{position:fixed;left:230px;right:0;top:0;height:60px;display:flex;align-items:center;gap:14px;padding:0 24px;padding-top:env(safe-area-inset-top,0px);background:rgba(11,11,14,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:5}
+header input{flex:1;max-width:420px;background:var(--panel);border:1px solid var(--line);color:var(--tx);padding:9px 14px;border-radius:9px}
+.sp{flex:1}.bell{position:relative;cursor:pointer;font-size:17px}.bell i{position:absolute;top:-4px;right:-6px;background:var(--ac);font:700 10px system-ui;padding:1px 5px;border-radius:9px;font-style:normal}
+.me{display:flex;gap:10px;align-items:center}.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--ac),#5a0f14);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+main{margin-left:230px;padding:84px 28px 40px;animation:in .35s}@keyframes in{from{opacity:0;transform:translateY(6px)}}
+h1{font-size:22px;margin-bottom:4px}.sub{color:var(--mu);margin-bottom:20px}h3{font-size:14px;margin-bottom:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;backdrop-filter:blur(8px)}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:2fr 1fr}.g3{grid-template-columns:1fr 1fr}
+.stat small{color:var(--mu);display:block}.stat b{font-size:26px}.stat b.ok{color:var(--ok)}
+table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--mu);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+td,th{padding:11px 10px;border-bottom:1px solid var(--line)}tr.row{cursor:pointer;transition:.15s}tr.row:hover{background:rgba(229,36,47,.07)}
+.tag{padding:2px 9px;border-radius:99px;font-size:12px;background:rgba(255,255,255,.08)}.t-r{background:rgba(229,36,47,.2);color:#ff7a82}.t-g{background:rgba(46,204,113,.15);color:#5fe39a}.t-o{background:rgba(240,160,48,.15);color:#f5b95c}
+button,.btn{background:var(--panel);border:1px solid var(--line);color:var(--tx);padding:8px 14px;border-radius:9px;cursor:pointer;font:inherit;transition:.2s}
+button:hover{border-color:var(--ac)}.pri{background:var(--ac);border-color:var(--ac);color:#fff}.pri:hover{background:var(--ac2)}
+input,select,textarea{background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--tx);padding:9px 12px;border-radius:9px;font:inherit;width:100%}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}.tabs button.on{background:rgba(229,36,47,.2);border-color:var(--ac)}
+.ev{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.ev span{color:var(--mu);margin-left:auto;font-size:12px;white-space:nowrap}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px}.kv dt{color:var(--mu)}.kv dd{margin:0}
+.back{margin-bottom:14px}.msg{padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.06);max-width:80%;margin-bottom:8px}.msg.s{background:rgba(229,36,47,.18);margin-left:auto}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;place-items:center;z-index:20;backdrop-filter:blur(4px)}#modal.on{display:grid}#modal .card{background:#14141a;width:min(420px,92vw)}
+#toast{position:fixed;right:24px;bottom:24px;background:#14141a;border:1px solid var(--ac);padding:12px 18px;border-radius:10px;opacity:0;transform:translateY(10px);transition:.3s;z-index:30}#toast.on{opacity:1;transform:none}
+.map{position:relative;background:#101015;border-radius:14px;overflow:hidden;border:1px solid var(--line);height:520px}.map svg{width:100%;height:100%;display:block}
+.mk{position:absolute;transform:translate(-50%,-50%);cursor:pointer;font-size:18px;transition:.2s;filter:drop-shadow(0 0 4px #000)}.mk:hover{transform:translate(-50%,-50%) scale(1.3)}
+.zn{position:absolute;transform:translate(-50%,-50%);border-radius:50%;border:2px dashed;pointer-events:none}
+.flt{display:flex;flex-direction:column;gap:6px}.flt label{display:flex;gap:8px;align-items:center;cursor:pointer}.flt input{width:auto}
+.bar{height:6px;border-radius:9px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.f{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}.f label{color:var(--mu);font-size:12px}
+#auth{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:radial-gradient(800px 500px at 50% -10%,rgba(229,36,47,.2),transparent),var(--bg)}#auth:empty{display:none}body.lock aside,body.lock header,body.lock main{display:none}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
+</style></head><body>
+<aside><div class="logo">VIZU<b>·</b>STAFF</div><nav id="nav"></nav></aside>
+<header><input id="gs" placeholder="Rechercher un joueur, un ticket, un ID…"><div class="sp"></div>
+<div class="bell" onclick="toast('3 nouvelles notifications')">🔔<i>3</i></div>
+<div class="me" id="me"></div></header>
+<main id="view"></main><div id="auth"></div>
+<div id="modal"><div class="card" id="mc"></div></div><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),pages=[["🏠","Dashboard"],["👥","Joueurs"],["🎫","Tickets"],["🚨","Sanctions"],["🗺️","Carte"],["🏢","Entreprises"],["🎬","Scènes RP"],["🛡️","Équipe Staff"],["📊","Statistiques"],["📜","Logs"],["📋","Bails"],["🗺️","Suggestions Mapping"],["💡","Suggestions Script"],["🐛","Bugs à régler"],["⚙️","Configuration"]];
+const players=[
+{id:12,n:"Marco_Rivera",d:"marco#2210",lic:"license:a41f9c",fc:"02/09/2026",lc:"Aujourd’hui 21:04",tp:"112 h",ch:["Marco Rivera (Mécano)","Tony Rivera (Civil)"],veh:["Sultan RS","Bison"],sa:1,w:2,job:"Mécano",x:34,y:62,car:"Bison",st:"En ville"},
+{id:27,n:"Lena_Voss",d:"lena.v#8841",lic:"license:7be230",fc:"11/08/2026",lc:"Aujourd’hui 20:48",tp:"241 h",ch:["Lena Voss (EMS)"],veh:["Ambulance"],sa:0,w:0,job:"EMS",x:52,y:40,car:"Ambulance",st:"En intervention"},
+{id:31,n:"Dante_K",d:"dante#1093",lic:"license:c90d12",fc:"20/09/2026",lc:"Aujourd’hui 21:10",tp:"48 h",ch:["Dante Kovac (Civil)"],veh:["Kuruma","Faggio"],sa:3,w:4,job:"Civil",x:70,y:70,car:"Kuruma",st:"Recherché"},
+{id:44,n:"Sam_Walker",d:"sam.w#5520",lic:"license:11ff08",fc:"01/07/2026",lc:"Aujourd’hui 19:30",tp:"390 h",ch:["Sam Walker (Police)"],veh:["Stanier LSPD"],sa:0,w:1,job:"Police",x:46,y:30,car:"Stanier LSPD",st:"En patrouille"},
+{id:58,n:"Nina_Cole",d:"nina#7712",lic:"license:e5a7b3",fc:"15/10/2026",lc:"Hier 23:12",tp:"19 h",ch:["Nina Cole (Civil)"],veh:["Blista"],sa:0,w:0,job:"Civil",x:24,y:44,car:"À pied",st:"En ville"}];
+const tickets=[
+{id:1042,p:"Dante_K",c:"Bug",pr:"Haute",s:"Alex_Admin",d:"27/10 20:41",st:"En cours"},
+{id:1041,p:"Nina_Cole",c:"Question",pr:"Basse",s:"—",d:"27/10 20:12",st:"Ouvert"},
+{id:1040,p:"Marco_Rivera",c:"Report joueur",pr:"Haute",s:"Jade_Mod",d:"27/10 19:58",st:"En cours"},
+{id:1039,p:"Lena_Voss",c:"Remboursement",pr:"Normale",s:"Alex_Admin",d:"27/10 18:30",st:"Fermé"},
+{id:1038,p:"Sam_Walker",c:"Report joueur",pr:"Haute",s:"—",d:"27/10 17:05",st:"Ouvert"}];
+const comps=[
+{n:"Benny’s Custom",t:"Mécano",b:"Marco Rivera",co:"Tony Rivera",e:12,s:"Ouverte",a:82,gr:["Apprenti","Mécano","Chef d’atelier"]},
+{n:"Bahama Mamas",t:"Boîte de nuit",b:"Ivy Chen",co:"Luca Moretti",e:18,s:"Ouverte",a:67,gr:["Barman","Videur","Manager"]},
+{n:"LS Taxi",t:"Transport",b:"Omar Nasri",co:"—",e:7,s:"Fermée",a:21,gr:["Chauffeur","Dispatcher"]},
+{n:"Vanilla Burger",t:"Restauration",b:"Kate Doyle",co:"Hugo Lenz",e:9,s:"Ouverte",a:54,gr:["Serveur","Cuisinier","Gérant"]}];
+const staff=[["Alex_Admin","Administrateur","3h12",14],["Jade_Mod","Modératrice","1h47",9],["Kyle_Helper","Helper","0h35",3],["Mia_Resp","Responsable","2h20",11]];
+const acts=[["🟢","Marco_Rivera s’est connecté","il y a 1 min"],["🎫","Ticket #1042 créé par Dante_K","il y a 4 min"],["🚨","Warn envoyé à Dante_K (Freekill)","il y a 9 min"],["🛡️","Alex_Admin a téléporté Nina_Cole","il y a 15 min"],["✅","Ticket #1039 fermé par Alex_Admin","il y a 22 min"],["🔴","Sam_Walker s’est déconnecté","il y a 31 min"]];
+let logs=[],lf={q:"",cat:"Toutes",u:"Tous"};
+const zones=[{nm:"Course de rue",c:"#a050ff",r:60,x:30,y:75,ty:"Zone événement"},{nm:"Zone interdite aéroport",c:"#e5242f",r:50,x:62,y:84,ty:"Zone interdite"}];
+const mkTypes={Joueurs:["👤","#ccc"],Staff:["🛡️"],Police:["🚔"],EMS:["🚑"],Mécanos:["🔧"],Entreprises:["🏢"],"Points d’intérêt":["📍"]};
+let cur="Dashboard",tf="Tous",fl={},selP=null,openT=null,mapPts=[];
+const tg=(t,c)=>`<span class="tag ${c||""}">${t}</span>`;
+const stc=s=>({Ouvert:"t-o","En cours":"t-r",Fermé:"t-g",Ouverte:"t-g",Fermée:"t-r"}[s]||"");
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),2400)}
+function confirmBox(title,txt,cb,extra){$("#mc").innerHTML=`<h3>${title}</h3><p style="color:var(--mu);margin-bottom:14px">${txt}</p>${extra?`<div class="f"><label>Motif</label><input id="mot" placeholder="Motif obligatoire"></div>`:""}<div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="closeM()">Annuler</button><button class="pri" id="ok">Confirmer</button></div>`;
+$("#modal").classList.add("on");$("#ok").onclick=()=>{if(extra&&!$("#mot").value.trim()){$("#mot").style.borderColor="var(--ac)";return}closeM();cb();}}
+function closeM(){$("#modal").classList.remove("on")}
+$("#modal").onclick=e=>{if(e.target.id=="modal")closeM()};
+function go(p){cur=p;selP=null;openT=null;nav();render()}
+function nav(){$("#nav").innerHTML=pages.filter(([i,n])=>can(n)).map(([i,n])=>`<a class="${n==cur?"on":""}" onclick="go('${n}')"><span>${i}</span>${n}</a>`).join("")}
+function chart(){const d=[22,15,9,6,5,8,14,25,38,52,61,66,70,74,80,92,101,108,96,84,77,70,58,41],W=640,H=200,m=Math.max(...d),pts=d.map((v,i)=>[i*W/23,H-v/m*(H-20)-4]),l=pts.map(p=>p.join(",")).join(" ");
+return `<svg viewBox="0 0 ${W} ${H+20}" style="width:100%"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e5242f" stop-opacity=".45"/><stop offset="1" stop-color="#e5242f" stop-opacity="0"/></linearGradient></defs><polygon points="0,${H} ${l} ${W},${H}" fill="url(#g)"/><polyline points="${l}" fill="none" stroke="#ff4753" stroke-width="2.5" stroke-linejoin="round"/>${[0,6,12,18,23].map(i=>`<text x="${i*W/23}" y="${H+16}" fill="#8a8a96" font-size="11" text-anchor="middle">${String(i).padStart(2,"0")}h</text>`).join("")}</svg>`}
+const views={
+Dashboard(){const st=[["Joueurs connectés","87 / 128"],["Staff en service","4"],["Tickets ouverts","2"],["Reports en attente","2"],["Sanctions aujourd’hui","9"],["Mode","● Autonome","ok"],["Pic de joueurs","108"],["Temps moyen ticket","6 min 40 s"]];
+return `<h1>Dashboard</h1><div class="sub">Vue d’ensemble · données de démonstration</div><div class="grid g4">${st.map(s=>`<div class="card stat"><small>${s[0]}</small><b class="${s[2]||""}">${s[1]}</b></div>`).join("")}</div>
+<div class="grid g2" style="margin-top:14px"><div class="card"><h3>Fréquentation · dernières 24 h</h3>${chart()}</div><div class="card"><h3>Activité récente</h3>${acts.map(a=>`<div class="ev">${a[0]} ${a[1]}<span>${a[2]}</span></div>`).join("")}</div></div>
+<div class="card" style="margin-top:14px"><h3>Staff actuellement en service</h3><table><tr><th>Staff<th>Grade<th>En service<th>Tickets traités</tr>${staff.map(s=>`<tr><td><div style="display:flex;gap:10px;align-items:center"><div class="av">${s[0].slice(0,2).toUpperCase()}</div>${s[0]}</div><td>${tg(s[1])}<td>${s[2]}<td>${s[3]}</tr>`).join("")}</table></div>`},
+Joueurs(){if(selP)return player(selP);return `<h1>Joueurs</h1><div class="sub">Recherche par ID, pseudo, Discord ou licence FiveM</div><div class="card"><div style="display:flex;gap:10px;margin-bottom:12px"><input id="q" placeholder="Ex : 31, Dante, dante#1093, license:c90d12" oninput="plist()"></div><div id="pl"></div></div>`},
+Tickets(){if(openT)return ticket(openT);const f=tickets.filter(t=>tf=="Tous"||(tf=="Prioritaires"?t.pr=="Haute":tf=="Ouverts"?t.st=="Ouvert":tf=="En cours"?t.st=="En cours":t.st=="Fermé"));
+return `<h1>Tickets / Reports</h1><div class="sub">Gestion des demandes joueurs</div><div class="tabs">${["Tous","Ouverts","En cours","Fermés","Prioritaires"].map(t=>`<button class="${t==tf?"on":""}" onclick="tf='${t}';render()">${t}</button>`).join("")}</div>
+<div class="card"><table><tr><th>ID<th>Joueur<th>Catégorie<th>Priorité<th>Staff<th>Date<th>Statut</tr>${f.map(t=>`<tr class="row" onclick="openT=${t.id};render()"><td>#${t.id}<td>${t.p}<td>${t.c}<td>${tg(t.pr,t.pr=="Haute"?"t-r":"")}<td>${t.s}<td>${t.d}<td>${tg(t.st,stc(t.st))}</tr>`).join("")||"<tr><td>Aucun ticket"}</table></div>`},
+Sanctions(){return `<h1>Sanctions</h1><div class="sub">Historique des sanctions récentes</div><div class="card"><table><tr><th>Heure<th>Joueur<th>Type<th>Motif<th>Staff</tr>${[["21:04","Dante_K","Warn","Freekill","Jade_Mod"],["20:40","Anon_77","Ban 3 j","Cheat","Mia_Resp"],["19:12","Marco_Rivera","Jail 15 min","Troll","Alex_Admin"],["18:02","Dante_K","Kick","Vocal","Kyle_Helper"]].map(r=>`<tr><td>${r[0]}<td>${r[1]}<td>${tg(r[2],"t-r")}<td>${r[3]}<td>${r[4]}</tr>`).join("")}</table></div>`},
+Carte(){return `<h1>Carte de Los Santos</h1><div class="sub">Positions de démonstration · cliquez sur la carte pour placer une zone</div><div class="grid" style="grid-template-columns:200px 1fr 280px"><div class="card"><h3>Filtres</h3><div class="flt">${[...Object.keys(mkTypes),"Zones d’intervention","Zones interdites","Zones événement"].map(k=>`<label><input type="checkbox" ${fl[k]===false?"":"checked"} onchange="fl['${k}']=this.checked;drawMap()">${(mkTypes[k]||["🚨"])[0]} ${k}</label>`).join("")}</div></div><div class="map" id="map" onclick="mapClick(event)"></div><div class="card" id="side"><h3>Détails</h3><p style="color:var(--mu)">Sélectionnez un marqueur.</p></div></div>
+<div class="card" style="margin-top:14px"><h3>Créer une zone</h3><div class="grid" style="grid-template-columns:repeat(4,1fr)"><div class="f"><label>Nom</label><input id="zn"></div><div class="f"><label>Type</label><select id="zt"><option>Zone événement<option>Zone scène RP<option>Zone interdite<option>Zone braquage<option>Zone staff</select></div><div class="f"><label>Couleur</label><input id="zc" type="color" value="#a050ff"></div><div class="f"><label>Rayon (m)</label><input id="zr" type="number" value="60"></div><div class="f"><label>Durée (min)</label><input id="zd" type="number" value="60"></div><div class="f"><label>Staff responsable</label><input id="zs" value="Alex_Admin"></div><div class="f" style="grid-column:span 2"><label>Description</label><input id="zdesc"></div></div><button class="pri" onclick="addZone()">Créer la zone</button></div>`},
+Entreprises(){if(selP!==null&&typeof selP=="number")return comp(comps[selP]);return `<h1>Entreprises</h1><div class="sub">Gestion des sociétés du serveur</div><div class="card"><table><tr><th>Nom<th>Type<th>Patron<th>Employés<th>Statut<th>Activité</tr>${comps.map((c,i)=>`<tr class="row" onclick="selP=${i};render()"><td><b>${c.n}</b><td>${c.t}<td>${c.b}<td>${c.e}<td>${tg(c.s,stc(c.s))}<td style="width:140px"><div class="bar"><i style="width:${c.a}%"></i></div></tr>`).join("")}</table></div>`},
+"Équipe Staff"(){return `<h1>Équipe Staff</h1><div class="sub">Membres et grades</div><div class="grid g3">${staff.map(s=>`<div class="card" style="display:flex;gap:14px;align-items:center"><div class="av" style="width:48px;height:48px">${s[0].slice(0,2).toUpperCase()}</div><div><b>${s[0]}</b><br>${tg(s[1])}<br><small style="color:var(--mu)">${s[3]} tickets traités</small></div></div>`).join("")}</div>`},
+Logs(){const cats=["Toutes",...new Set(logs.map(l=>l.cat))],us=["Tous",...new Set(logs.map(l=>l.u))],op=(arr,v)=>arr.map(x=>`<option ${x==v?"selected":""}>${esc(x)}</option>`).join("");
+return `<h1>📜 Logs</h1><div class="sub">Journal des actions staff · enregistré dans ce navigateur</div>
+<div class="card"><div class="grid" style="grid-template-columns:2fr 1fr 1fr auto auto;align-items:end">
+<div class="f" style="margin:0"><label>Recherche</label><input value="${esc(lf.q)}" placeholder="Action, cible, staff…" oninput="lf.q=this.value;logRows()"></div>
+<div class="f" style="margin:0"><label>Catégorie</label><select onchange="lf.cat=this.value;logRows()">${op(cats,lf.cat)}</select></div>
+<div class="f" style="margin:0"><label>Staff</label><select onchange="lf.u=this.value;logRows()">${op(us,lf.u)}</select></div>
+<button onclick="logExport()">⬇ Export CSV</button>${isAdm()?`<button onclick="logClear()">🗑 Vider</button>`:"<span></span>"}</div></div>
+<div class="card" style="margin-top:14px"><div id="lg"></div></div>`},
+Statistiques(){return `<h1>Statistiques</h1><div class="sub">Fréquentation sur 24 h</div><div class="card">${chart()}</div>`}};
+function stub(n){return `<h1>${n}</h1><div class="sub">Section à venir.</div><div class="card" style="color:var(--mu)">Le panel fonctionne en autonome : aucune connexion à un serveur de jeu, tout est enregistré dans ce navigateur.</div>`}
+function render(){const v=$("#view");v.style.animation="none";v.offsetWidth;v.style.animation="";v.innerHTML=!can(cur)?denied():(views[cur]||(()=>stub(cur)))();if(cur=="Joueurs"&&!selP)plist();if(cur=="Carte")drawMap();if(cur=="Logs")logRows()}
+function plist(){const q=($("#q")?.value||"").toLowerCase(),f=players.filter(p=>[p.id,p.n,p.d,p.lic].join(" ").toLowerCase().includes(q));
+$("#pl").innerHTML=`<table><tr><th>ID<th>Pseudo<th>Discord<th>Job<th>Sanctions</tr>${f.map(p=>`<tr class="row" onclick="selP=${p.id};render()"><td>${p.id}<td>${p.n}<td>${p.d}<td>${p.job}<td>${p.sa?tg(p.sa,"t-r"):"0"}</tr>`).join("")||"<tr><td>Aucun résultat"}</table>`}
+function act(a,id){const p=players.find(x=>x.id==id),sens=["Kick","Ban","Jail","Freeze"].includes(a);
+const run=()=>{const m=(a!="Freeze"&&(sens||a=="Warn"))?($("#mot")||{}).value:"";addLog("Modération",a,p.n+(m&&m.trim()?" — "+m.trim():""));toast(`${a} → ${p.n}`)};sens||a=="Warn"?confirmBox(`${a} ${p.n} ?`,"Cette action sera enregistrée dans les logs.",run,a!="Freeze"):run()}
+function player(id){const p=players.find(x=>x.id==id);return `<button class="back" onclick="selP=null;render()">← Retour</button><div class="card"><div style="display:flex;gap:16px;align-items:center"><div class="av" style="width:64px;height:64px;font-size:22px">${p.n.slice(0,2).toUpperCase()}</div><div><h1 style="margin:0">${p.n}</h1>${tg("ID "+p.id)} ${tg(p.st,"t-g")}</div></div>
+<div class="acts">${["Spectate","Téléporter vers le joueur","Téléporter le joueur","Freeze","Kick","Warn","Ban","Jail"].map(a=>`<button class="${["Ban","Kick"].includes(a)?"pri":""}" onclick="act('${a.replace("Téléporter vers le joueur","TP vers").replace("Téléporter le joueur","TP ici")}',${p.id})">${a}</button>`).join("")}</div></div>
+<div class="grid g3" style="margin-top:14px"><div class="card"><h3>Informations</h3><dl class="kv"><dt>Discord<dd>${p.d}<dt>Licence<dd>${p.lic}<dt>Première connexion<dd>${p.fc}<dt>Dernière connexion<dd>${p.lc}<dt>Temps de jeu<dd>${p.tp}<dt>Sanctions / Warns<dd>${p.sa} / ${p.w}</dl></div>
+<div class="card"><h3>Personnages & véhicules</h3>${p.ch.map(c=>"👤 "+c).join("<br>")}<br><br>${p.veh.map(v=>"🚗 "+v).join("<br>")}</div>
+<div class="card"><h3>Notes staff</h3><textarea rows="3" placeholder="Ajouter une note…"></textarea><button style="margin-top:8px" onclick="toast('Note enregistrée');addLog('Joueur','Note staff ajoutée','${p.n}')">Enregistrer</button></div></div>
+<div class="card" style="margin-top:14px"><h3>Historique des actions</h3>${logs.filter(l=>String(l.c).includes(p.n)).slice(0,5).map(l=>`<div class="ev">${esc(l.a)} par ${esc(l.u)}<span>${fmt(l.ts)}</span></div>`).join("")||`<div class="ev" style="color:var(--mu)">Aucune action enregistrée</div>`}</div>`}
+function ticket(id){const t=tickets.find(x=>x.id==id);return `<button class="back" onclick="openT=null;render()">← Retour</button><div class="grid g2"><div class="card"><div style="display:flex;justify-content:space-between"><h3>Ticket #${t.id} · ${t.c}</h3>${tg(t.st,stc(t.st))}</div>
+<div class="msg">Bonjour, j’ai un souci, pouvez-vous m’aider ?</div><div class="msg s">Bonjour ${t.p}, un staff prend en charge votre demande.</div><div class="msg">Merci, j’attends.</div>
+<div style="display:flex;gap:8px;margin-top:12px"><input placeholder="Répondre au joueur…"><button class="pri" onclick="toast('Message envoyé');addLog('Ticket','Réponse ticket','#${t.id}')">Envoyer</button></div></div>
+<div class="grid"><div class="card"><h3>Infos</h3><dl class="kv" style="grid-template-columns:90px 1fr"><dt>Joueur<dd>${t.p}<dt>Priorité<dd>${t.pr}<dt>Assigné<dd>${t.s}<dt>Date<dd>${t.d}</dl><div class="acts"><button onclick="toast('Ticket assigné à '+me.u);addLog('Ticket','Ticket assigné','#${t.id}')">M’assigner</button><button class="pri" onclick="confirmBox('Fermer le ticket ?','Le joueur sera notifié.',()=>{tickets.find(x=>x.id==${t.id}).st='Fermé';addLog('Ticket','Ticket fermé','#${t.id}');toast('Ticket fermé');render()})">Fermer</button></div></div>
+<div class="card"><h3>Notes internes</h3><textarea rows="3" placeholder="Visible par le staff uniquement"></textarea></div>
+<div class="card"><h3>Historique</h3><div class="ev">Créé<span>${t.d}</span></div><div class="ev">Assigné à ${t.s}<span>+2 min</span></div></div></div></div>`}
+function comp(c){return `<button class="back" onclick="selP=null;render()">← Retour</button><div class="card"><h1>${c.n} ${tg(c.s,stc(c.s))}</h1><div class="sub">${c.t}</div></div><div class="grid g3" style="margin-top:14px"><div class="card"><h3>Direction</h3><dl class="kv" style="grid-template-columns:100px 1fr"><dt>Patron<dd>${c.b}<dt>Co-patron<dd>${c.co}<dt>Employés<dd>${c.e}</dl></div><div class="card"><h3>Grades</h3>${c.gr.map(g=>tg(g)).join(" ")}</div><div class="card"><h3>Activité</h3><div class="bar"><i style="width:${c.a}%"></i></div><p style="margin-top:8px;color:var(--mu)">${c.a} % sur 7 jours</p></div></div><div class="card" style="margin-top:14px"><h3>Historique</h3><div class="ev">Nouvel employé recruté<span>hier</span></div><div class="ev">Promotion : ${c.gr[c.gr.length-1]}<span>il y a 3 j</span></div><div class="ev">Coffre : +12 400 $<span>il y a 5 j</span></div></div>`}
+function drawMap(){const m=$("#map");if(!m)return;const on=k=>fl[k]!==false;
+const pts=[...players.map(p=>({n:p.n,x:p.x,y:p.y,k:p.job=="Police"?"Police":p.job=="EMS"?"EMS":p.job=="Mécano"?"Mécanos":"Joueurs",p})),{n:"Alex_Admin",x:50,y:55,k:"Staff"},{n:"Benny’s",x:38,y:58,k:"Entreprises"},{n:"Bahama Mamas",x:20,y:52,k:"Entreprises"},{n:"Aéroport LSIA",x:60,y:86,k:"Points d’intérêt"}];
+mapPts=pts;
+m.innerHTML=`<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0H100V100H0Z" fill="#0c1018"/><path d="M12 30Q30 8 62 12 88 16 94 44 98 74 70 92 40 98 18 80 4 60 12 30Z" fill="#171a22" stroke="#2a2f3a" stroke-width=".4"/><g stroke="#2a2f3a" stroke-width=".3" fill="none"><path d="M10 50H95M30 15V92M55 12V95M12 72H90M70 20V90"/></g></svg>`+
+pts.filter(p=>on(p.k)).map((p,i)=>`<div class="mk" style="left:${p.x}%;top:${p.y}%" title="${p.n}" onclick="event.stopPropagation();pick(${pts.indexOf(p)})">${mkTypes[p.k][0]}</div>`).join("")+
+zones.filter(z=>on(z.ty=="Zone interdite"?"Zones interdites":z.ty=="Zone événement"?"Zones événement":"Zones d’intervention")).map(z=>`<div class="zn" style="left:${z.x}%;top:${z.y}%;width:${z.r}px;height:${z.r}px;border-color:${z.c};background:${z.c}33"></div>`).join("")}
+function pick(i){const p=mapPts[i],q=p.p;$("#side").innerHTML=q?`<h3>${q.n}</h3><dl class="kv" style="grid-template-columns:80px 1fr"><dt>ID<dd>${q.id}<dt>Position<dd>X ${q.x*40-800|0}, Y ${q.y*60-2400|0}<dt>Job<dd>${q.job}<dt>Véhicule<dd>${q.car}<dt>Statut<dd>${q.st}</dl><div class="acts"><button onclick="selP=${q.id};go('Joueurs');selP=${q.id};render()">Fiche</button><button onclick="act('Spectate',${q.id})">Spectate</button></div>`:`<h3>${p.n}</h3><p style="color:var(--mu)">${p.k}</p>`}
+let lastXY=[50,50];function mapClick(e){const r=$("#map").getBoundingClientRect();lastXY=[(e.clientX-r.left)/r.width*100,(e.clientY-r.top)/r.height*100];toast("Position de la zone définie")}
+function addZone(){const n=$("#zn").value.trim();if(!n){$("#zn").style.borderColor="var(--ac)";return}zones.push({nm:n,c:$("#zc").value,r:+$("#zr").value||60,x:lastXY[0],y:lastXY[1],ty:$("#zt").value});addLog("Carte","Zone créée",n);toast("Zone « "+n+" » créée");drawMap()}
+const mem={},ST={get(k,d){try{const v=localStorage.getItem(k);return v==null?(mem[k]??d):JSON.parse(v)}catch(e){return mem[k]??d}},set(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const _M=60000,_N=Date.now();
+logs=ST.get("logs",null)||[
+{ts:_N-2*_M,u:"Alex_Admin",cat:"Modération",a:"Freeze",c:"Dante_K"},
+{ts:_N-8*_M,u:"Jade_Mod",cat:"Modération",a:"Warn",c:"Dante_K — Freekill"},
+{ts:_N-17*_M,u:"Alex_Admin",cat:"Modération",a:"Spectate",c:"Nina_Cole"},
+{ts:_N-32*_M,u:"Mia_Resp",cat:"Modération",a:"Ban 3 j",c:"Anon_77 — Cheat"},
+{ts:_N-60*_M,u:"Kyle_Helper",cat:"Ticket",a:"Réponse ticket",c:"#1040"}];
+const pad=n=>String(n).padStart(2,"0"),fmt=ts=>{const d=new Date(ts);return `${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`};
+const catc={"Modération":"t-r","Ticket":"t-o","Compte":"t-g","Connexion":"","Section":"","Carte":"","Joueur":"t-o","Logs":"t-r"};
+function addLog(cat,a,c,u){logs.unshift({ts:Date.now(),u:u||(me?me.u:"Système"),cat,a,c:c||"—"});if(logs.length>500)logs.length=500;ST.set("logs",logs)}
+function logFiltered(){const q=lf.q.toLowerCase();return logs.filter(l=>(lf.cat=="Toutes"||l.cat==lf.cat)&&(lf.u=="Tous"||l.u==lf.u)&&(!q||[l.u,l.cat,l.a,l.c].join(" ").toLowerCase().includes(q)))}
+function logRows(){const e=$("#lg");if(!e)return;const f=logFiltered();
+e.innerHTML=`<table><tr><th>Date<th>Staff<th>Catégorie<th>Action<th>Cible</tr>${f.slice(0,200).map(l=>`<tr><td style="white-space:nowrap">${fmt(l.ts)}<td>${esc(l.u)}<td>${tg(esc(l.cat),catc[l.cat])}<td>${esc(l.a)}<td>${esc(l.c)}</tr>`).join("")||`<tr><td colspan="5" style="color:var(--mu)">Aucun log</tr>`}</table><p style="color:var(--mu);margin-top:10px;font-size:12px">${f.length} entrée(s)${f.length>200?" · 200 affichées":""}</p>`}
+function logExport(){const f=logFiltered(),q=x=>'"'+String(x).replace(/"/g,'""')+'"',csv=["Date;Staff;Catégorie;Action;Cible",...f.map(l=>[new Date(l.ts).toLocaleString("fr-FR"),l.u,l.cat,l.a,l.c].map(q).join(";"))].join("\n"),a=document.createElement("a");
+a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv"}));a.download="logs-vizu.csv";a.click();toast("Export CSV lancé")}
+function logClear(){if(!isAdm())return;confirmBox("Vider les logs ?","Toutes les entrées seront supprimées.",()=>{logs=[];ST.set("logs",logs);addLog("Logs","Logs vidés");render()})}
+const CODE="VIZU-STAFF",esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let me=null,am="login";
+async function hs(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("vizu:"+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+function authUI(err,ok){const l=am=="login";
+$("#auth").innerHTML=`<div class="card" style="width:min(420px,100%)"><div class="logo" style="text-align:center">VIZU<b>·</b>STAFF</div><h3 style="text-align:center">${l?"Connexion":"Créer un compte staff"}</h3>
+<div class="f"><label>Pseudo staff</label><input id="au" autocomplete="username"></div>${l?"":`<div class="f"><label>Discord</label><input id="ad" placeholder="pseudo#0000"></div>`}
+<div class="f"><label>Mot de passe</label><input id="ap" type="password" autocomplete="${l?"current-password":"new-password"}"></div>${l?"":`<div class="f"><label>Confirmer le mot de passe</label><input id="ap2" type="password"></div><div class="f"><label>Code d’invitation staff</label><input id="ac"></div>`}
+<p style="min-height:20px;color:${ok?"var(--ok)":"var(--ac2)"};margin-bottom:10px">${err||""}</p>
+<button class="pri" style="width:100%" onclick="submitAuth()">${l?"Se connecter":"Créer mon compte"}</button>
+<p style="text-align:center;margin-top:14px;color:var(--mu)">${l?"Pas encore de compte ?":"Déjà un compte ?"} <a style="color:var(--ac2);cursor:pointer" onclick="am='${l?"reg":"login"}';authUI()">${l?"Créer un compte":"Se connecter"}</a></p></div>`;
+document.body.classList.add("lock");$("#au").focus()}
+async function submitAuth(){const u=$("#au").value.trim(),p=$("#ap").value,acc=ST.get("acc",[]),x=acc.find(a=>a.u.toLowerCase()==u.toLowerCase());
+if(am=="login"){if(!x||x.h!=await hs(p))return authUI("Pseudo ou mot de passe incorrect.");if(x.st!="Actif")return authUI("Compte en attente de validation par un administrateur.");return enter(x,1)}
+const d=$("#ad").value.trim();
+if(u.length<3)return authUI("Pseudo : 3 caractères minimum.");
+if(p.length<8)return authUI("Mot de passe : 8 caractères minimum.");
+if(p!=$("#ap2").value)return authUI("Les mots de passe ne correspondent pas.");
+if($("#ac").value.trim()!=CODE)return authUI("Code d’invitation invalide.");
+if(x)return authUI("Ce pseudo est déjà pris.");
+const first=!acc.length,n={u,d,h:await hs(p),role:first?"Administrateur":"Helper",st:first?"Actif":"En attente",at:new Date().toLocaleDateString("fr-FR")};
+acc.push(n);ST.set("acc",acc);addLog("Compte","Création de compte",n.role+(first?"":" (en attente)"),n.u);if(first)return enter(n,1);
+am="login";authUI("Compte créé. Il sera actif après validation par un administrateur.",1)}
+function enter(a,fresh){me=a;ST.set("sess",a.u);if(fresh)addLog("Connexion","Connexion au panel");document.body.classList.remove("lock");$("#auth").innerHTML="";
+$("#me").innerHTML=`<div class="av">${esc(a.u.slice(0,2).toUpperCase())}</div><div><b>${esc(a.u)}</b><br><small style="color:var(--mu)">${a.role}</small></div><button onclick="logout()">Déconnexion</button>`;cur="Dashboard";nav();render()}
+function logout(){addLog("Connexion","Déconnexion");ST.set("sess","");me=null;am="login";authUI()}
+function accountsCard(){if(!me||me.role!="Administrateur")return"";const acc=ST.get("acc",[]);
+return `<div class="card" style="margin-top:14px"><h3>Comptes staff (${acc.length})</h3><table><tr><th>Pseudo<th>Discord<th>Rôle<th>Créé le<th>Statut<th></tr>${acc.map((a,i)=>`<tr><td>${esc(a.u)}<td>${esc(a.d||"—")}<td>${a.role}<td>${a.at}<td>${tg(a.st,a.st=="Actif"?"t-g":"t-o")}<td style="text-align:right">${a.st!="Actif"?`<button class="pri" onclick="accOk(${i})">Valider</button> `:""}${a.role!="Administrateur"?`<button onclick="perms(${i})">Accès</button> `:""}${a.u!=me.u?`<button onclick="accDel(${i})">Supprimer</button>`:""}</tr>`).join("")}</table></div>`}
+function accOk(i){const acc=ST.get("acc",[]);acc[i].st="Actif";ST.set("acc",acc);addLog("Compte","Compte validé",acc[i].u);toast("Compte validé");render()}
+function accDel(i){confirmBox("Supprimer ce compte ?","Ce staff ne pourra plus se connecter.",()=>{const acc=ST.get("acc",[]),nm=acc[i].u;acc.splice(i,1);ST.set("acc",acc);addLog("Compte","Compte supprimé",nm);toast("Compte supprimé");render()})}
+const SEC={"Bails":{ic:"📋",t:"Bails d’entreprise",f:[["Entreprise","text"],["Local / adresse","text"],["Locataire","text"],["Loyer ($/sem.)","number"]],s:["Disponible","Occupé","Expiré"]},
+"Suggestions Mapping":{ic:"🗺️",t:"Suggestions de mapping",f:[["Titre","text"],["Lieu","text"],["Description","area"]],s:["Proposée","Acceptée","Refusée","Réalisée"]},
+"Suggestions Script":{ic:"💡",t:"Suggestions de script",f:[["Titre","text"],["Priorité","sel:Basse,Normale,Haute"],["Description","area"]],s:["Proposée","Acceptée","Refusée","Réalisée"]},
+"Bugs à régler":{ic:"🐛",t:"Bugs à régler",f:[["Titre","text"],["Gravité","sel:Faible,Moyenne,Critique"],["Description","area"]],s:["Ouvert","En cours","Résolu"]}};
+const isAdm=()=>me&&me.role=="Administrateur";
+const can=n=>{if(!SEC[n]||isAdm())return true;const a=me&&(ST.get("acc",[]).find(x=>x.u==me.u)||me);return !!a&&(a.perms||[]).includes(n)};
+const denied=()=>`<h1>Accès refusé</h1><div class="sub">Un administrateur doit vous donner accès à cette section.</div>`;
+const sd=k=>ST.get("sec:"+k,[]);
+Object.keys(SEC).forEach(k=>views[k]=()=>sec(k));
+function sec(k){const c=SEC[k],rows=sd(k),op=a=>a.map(x=>`<option>${x}</option>`).join("");
+return `<h1>${c.ic} ${c.t}</h1><div class="sub">${rows.length} entrée(s)</div><div class="card"><h3>Ajouter</h3><div class="grid g3">${c.f.map((f,i)=>`<div class="f"><label>${f[0]}</label>${f[1]=="area"?`<textarea id="sf${i}" rows="2"></textarea>`:f[1].startsWith("sel:")?`<select id="sf${i}">${op(f[1].slice(4).split(","))}</select>`:`<input id="sf${i}" type="${f[1]}">`}</div>`).join("")}</div><button class="pri" onclick="secAdd('${k}')">Ajouter</button></div>
+<div class="card" style="margin-top:14px"><table><tr>${c.f.map(f=>`<th>${f[0]}`).join("")}<th>Par<th>Statut<th></tr>${rows.map((r,i)=>`<tr>${r.v.map(v=>`<td>${esc(v)}`).join("")}<td>${esc(r.by)}<td><select style="width:auto" onchange="secSt('${k}',${i},this.value)">${c.s.map(s=>`<option ${s==r.st?"selected":""}>${s}</option>`).join("")}</select><td>${isAdm()||r.by==me.u?`<button onclick="secDel('${k}',${i})">✕</button>`:""}</tr>`).join("")||`<tr><td colspan="9" style="color:var(--mu)">Aucune entrée pour le moment.`}</table></div>`}
+function secAdd(k){const c=SEC[k],v=c.f.map((f,i)=>$("#sf"+i).value.trim());if(!v[0]){$("#sf0").style.borderColor="var(--ac)";return}const r=sd(k);r.unshift({v,by:me.u,st:c.s[0]});ST.set("sec:"+k,r);addLog("Section","Ajout · "+k,v[0]);toast("Ajouté");render()}
+function secSt(k,i,s){if(!can(k))return;const r=sd(k);r[i].st=s;ST.set("sec:"+k,r);addLog("Section","Statut → "+s+" · "+k,r[i].v[0]);toast("Statut mis à jour")}
+function secDel(k,i){confirmBox("Supprimer cette entrée ?","Action définitive.",()=>{const r=sd(k),nm=r[i].v[0];r.splice(i,1);ST.set("sec:"+k,r);addLog("Section","Suppression · "+k,nm);render()})}
+function perms(i){const a=ST.get("acc",[])[i],p=a.perms||[];$("#mc").innerHTML=`<h3>Accès de ${esc(a.u)}</h3><p style="color:var(--mu);margin-bottom:12px">Choisissez les sections visibles par ce staff.</p><div class="flt" style="margin-bottom:14px">${Object.keys(SEC).map(k=>`<label><input type="checkbox" value="${k}" ${p.includes(k)?"checked":""}>${SEC[k].ic} ${k}</label>`).join("")}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="closeM()">Annuler</button><button class="pri" onclick="permSave(${i})">Enregistrer</button></div>`;$("#modal").classList.add("on")}
+function permSave(i){const acc=ST.get("acc",[]);acc[i].perms=[...document.querySelectorAll("#mc input:checked")].map(x=>x.value);ST.set("acc",acc);addLog("Compte","Accès modifiés",acc[i].u);closeM();toast("Accès mis à jour");render()}
+const _eq=views["Équipe Staff"];views["Équipe Staff"]=()=>_eq()+accountsCard();
+$("#auth").addEventListener("keydown",e=>{if(e.key=="Enter")submitAuth()});
+const sa=ST.get("acc",[]).find(a=>a.u==ST.get("sess","")&&a.st=="Actif");sa?enter(sa):authUI();
+</script></body></html>
